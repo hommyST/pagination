@@ -45,6 +45,10 @@ main {
   &:active {
     filter: brightness(1.4);
   }
+
+  &.active {
+    background-color: #4E5066;
+  }
 }
 
 

@@ -4,6 +4,7 @@ class Pagination {
     this._len = len
     this._elementsPerPage = 10
     this.wrapperElement = null
+    this.pageAmount = Math.ceil(len / this._elementsPerPage)
     this.init()
   }
 
@@ -32,9 +33,30 @@ class Pagination {
 
       let btn = ev.target
 
-      console.log(btn.dataset.paginationId)
+      this.changeCurrentPage(btn.dataset.paginationId)
+      //todo пересчитать и перерендерить кнопки ТУТ
+      this.changeActiveClass(btn)
+
+      // console.log(btn.dataset.paginationId)
     })
   }
+  
+  changeCurrentPage(id) {
+    if ('prev'  === id) this.currentPage--
+    else if ('next'  === id) this.currentPage++
+    else this.currentPage = Number(id)
+  }
+
+  changeActiveClass() {
+    Array.from(this.wrapperElement.children).forEach(btn => {
+      btn.classList.remove('active')
+
+      if (Number(btn.dataset.paginationId) === this.currentPage) {
+        btn.classList.add('active')
+      }
+    })
+  }
+
   
   build() {
     const wrap = document.createElement('div')
@@ -49,7 +71,7 @@ class Pagination {
 
     wrap.className = 'pagination'
     btnPrev.className = 'pagenum'
-    btn1.className = 'pagenum'
+    btn1.className = 'pagenum active'
     btn2.className = 'pagenum'
     btn3.className = 'pagenum'
     btn4.className = 'pagenum'
@@ -77,7 +99,7 @@ class Pagination {
     btn2.textContent = '2'
     btn3.textContent = '3'
     btn4.textContent = '4'
-    btn5.textContent = '5'
+    btn5.textContent = this.pageAmount
     btnNext.textContent = '>'
 
     wrap.append(btnPrev, btn1, btn2, btn3, btn4, btn5, btnNext)
