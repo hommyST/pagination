@@ -91,7 +91,7 @@ class Pagination {
     btn2.dataset.paginationId = '2'
     btn3.dataset.paginationId = '3'
     btn4.dataset.paginationId = '4'
-    btn5.dataset.paginationId = '5'
+    btn5.dataset.paginationId = this.pageAmount
     btnNext.dataset.paginationId = 'next'
 
     btnPrev.textContent = '<'
