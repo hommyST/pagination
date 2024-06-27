@@ -4,7 +4,7 @@ class Pagination {
     this._len = len
     this._elementsPerPage = 10
     this.wrapperElement = null
-    this.pageAmount = Math.ceil(len / this._elementsPerPage)
+    this.totalPage = Math.ceil(len / this._elementsPerPage)
     this.init()
   }
 
@@ -34,17 +34,82 @@ class Pagination {
       let btn = ev.target
 
       this.changeCurrentPage(btn.dataset.paginationId)
-      //todo пересчитать и перерендерить кнопки ТУТ
+      this.compute()
       this.changeActiveClass(btn)
-
-      // console.log(btn.dataset.paginationId)
     })
   }
-  
+
   changeCurrentPage(id) {
     if ('prev'  === id) this.currentPage--
     else if ('next'  === id) this.currentPage++
     else this.currentPage = Number(id)
+  }
+
+  compute() {
+    let prevBtn = this.wrapperElement.querySelector('[data-pagination-id="prev"]')
+    let nextBtn = this.wrapperElement.querySelector('[data-pagination-id="next"]')
+
+    let numBtns = [...this.wrapperElement.querySelectorAll('[data-pagination^="button-"]')]
+
+    if (this.currentPage <= 1) {
+      this.currentPage = 1
+      prevBtn.setAttribute('disabled', '')
+    } else if (this.currentPage >= this.totalPage) {
+      this.currentPage = this.totalPage
+      nextBtn.setAttribute('disabled', '')
+    } else {
+      prevBtn.removeAttribute('disabled')
+      nextBtn.removeAttribute('disabled')
+    }
+
+    if (this.currentPage < this.totalPage - 1 && this.currentPage > 2) {
+      numBtns.forEach((btn, index) => {
+        if (index === 0 || index === 4) return // Первая и последняя кнопка НЕ меняются
+
+        if (index === 1) {
+          btn.textContent = this.currentPage - 1
+          btn.dataset.paginationId = this.currentPage - 1
+        } else if (index === 2) {
+          btn.textContent = this.currentPage
+          btn.dataset.paginationId = this.currentPage
+        } else if (index === 3) {
+          btn.textContent = this.currentPage + 1
+          btn.dataset.paginationId = this.currentPage + 1
+        }
+      })
+    } else if (this.currentPage === 1) {
+      numBtns.forEach((btn, index) => {
+        if (index === 0 || index === 4) return // Первая и последняя кнопка НЕ меняются
+
+        if (index === 1) {
+          btn.textContent = 2
+          btn.dataset.paginationId = 2
+        } else if (index === 2) {
+          btn.textContent = 3
+          btn.dataset.paginationId = 3
+        } else if (index === 3) {
+          btn.textContent = 4
+          btn.dataset.paginationId = 4
+        }
+      })
+    } else if (this.currentPage === this.totalPage) {
+      numBtns.forEach((btn, index) => {
+        if (index === 0 || index === 4) return // Первая и последняя кнопка НЕ меняются
+
+        if (index === 1) {
+          btn.textContent = this.totalPage - 3
+          btn.dataset.paginationId = this.totalPage - 3
+        } else if (index === 2) {
+          btn.textContent = this.totalPage - 2
+          btn.dataset.paginationId = this.totalPage - 2
+        } else if (index === 3) {
+          btn.textContent = this.totalPage - 1
+          btn.dataset.paginationId = this.totalPage - 1
+        }
+      })
+    }
+
+
   }
 
   changeActiveClass() {
@@ -57,7 +122,7 @@ class Pagination {
     })
   }
 
-  
+
   build() {
     const wrap = document.createElement('div')
 
@@ -91,7 +156,7 @@ class Pagination {
     btn2.dataset.paginationId = '2'
     btn3.dataset.paginationId = '3'
     btn4.dataset.paginationId = '4'
-    btn5.dataset.paginationId = this.pageAmount
+    btn5.dataset.paginationId = this.totalPage
     btnNext.dataset.paginationId = 'next'
 
     btnPrev.textContent = '<'
@@ -99,7 +164,7 @@ class Pagination {
     btn2.textContent = '2'
     btn3.textContent = '3'
     btn4.textContent = '4'
-    btn5.textContent = this.pageAmount
+    btn5.textContent = this.totalPage
     btnNext.textContent = '>'
 
     wrap.append(btnPrev, btn1, btn2, btn3, btn4, btn5, btnNext)
